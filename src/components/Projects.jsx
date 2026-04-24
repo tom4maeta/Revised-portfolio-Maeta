@@ -33,7 +33,7 @@ const Projects = () => {
     {
       id: 4,
       title: 'Full-stack Web Application',
-      description: 'Nexus full-stack platform with user-authentication,Responsive design, and secure coding practices. Built with React, Tailwind CSS, Laravel, and MySQL.',
+      description: 'Nexoshield Technology Solutions full-stack website with Responsive design, and secure coding practices. Built with React, Tailwind CSS, Laravel, and MySQL.',
       tech: ['React', 'Tailwind CSS', 'Laravel 12', 'MySQL', 'JWT', 'CSRF Protection'],
       image: '/images/neximg.jpeg',
       github: 'https://github.com/tom4maeta',
