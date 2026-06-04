@@ -136,12 +136,14 @@ I am a detail-oriented problem solver who values continuous improvement, collabo
               {/* BACKGROUND ACCENT */}
               <div className="absolute -inset-2 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-400 opacity-10 blur-xl"></div>
 
-              {/* IMAGE CONTAINER */}
-              <div className="relative h-64 sm:h-72 md:h-80 lg:h-96 overflow-hidden rounded-xl border border-gray-200 shadow-md">
+            
+              <div className="relative h-64 sm:h-72 md:h-80 lg:h-96 overflow-hidden rounded-2xl border border-gray-200 shadow-md bg-white/5 ring-1 ring-white/5">
                 <img
                   src="/profile.png"
                   alt="Tom Maeta"
-                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover object-top rounded-2xl border-none"
                 />
               </div>
 

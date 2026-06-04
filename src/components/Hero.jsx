@@ -32,7 +32,7 @@ function Hero() {
               My focus is on performance, clean architecture, and cybersecurity best practices.
             </p>
 
-            {/* BUTTONS */}
+            
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
 
               <a
@@ -55,7 +55,7 @@ function Hero() {
 
           </div>
 
-          {/* IMAGE SECTION */}
+          
           <div className="w-full md:w-1/2 flex justify-center md:justify-end">
 
             <div className="relative w-40 h-40 sm:w-52 sm:h-52 md:w-64 md:h-64 lg:w-72 lg:h-72 animate-pulse-">
@@ -63,7 +63,9 @@ function Hero() {
               <img
                 src="/profile.png"
                 alt="Tom Maeta"
-                className="w-40 h-40 sm:w-52 sm:h-52 md:w-64 md:h-64 lg:w-72 lg:h-72 object-cover rounded-xl border border-white/20 shadow-lg"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover object-top rounded-2xl border border-white/20 shadow-lg"
               />
 
               {/* decorative glow */}
