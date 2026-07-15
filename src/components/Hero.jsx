@@ -1,84 +1,103 @@
-import React from 'react'
+import { createElement } from 'react'
 import { motion } from 'framer-motion'
-import resumePDF from '../assets/resume.pdf'
+import { heroContent } from '../data/homeContent'
 
-function Hero() {
+const MotionSection = motion.section
+const MotionDiv = motion.div
+
+const actionStyles = {
+  primary:
+    'bg-amber-400 text-gray-950 shadow-sm shadow-amber-500/30 hover:bg-amber-300',
+  secondary:
+    'border border-white/25 text-white hover:border-white/50 hover:bg-white/10'
+}
+
+function Hero({ content = heroContent }) {
   return (
-    <section
+    <MotionSection
       id="home"
-      className="min-h-screen flex items-center bg-gradient-to-r from-blue-700 to-cyan-600 pt-24 pb-16"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="relative flex min-h-screen items-start overflow-hidden bg-gradient-to-br from-blue-700 via-cyan-700 to-emerald-700 pt-24 pb-14 transition-colors duration-200 dark:from-slate-950 dark:via-blue-950 dark:to-emerald-950 sm:pt-28 sm:pb-16 lg:items-center lg:pt-16"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-
-        <motion.div
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <MotionDiv
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
           viewport={{ once: true }}
-          className="flex flex-col md:flex-row items-center gap-10 md:gap-16"
+          className="grid items-center gap-10 sm:gap-12 lg:grid-cols-[1.05fr_0.95fr]"
         >
-
-          {/* TEXT SECTION */}
-          <div className="w-full md:w-1/2 text-center md:text-left">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-5  ">
-              Hi, I'm <span className="text-yellow-400">Tom Maeta</span>
+          <div className="text-center lg:text-left">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white">
+              {content.titlePrefix}{' '}
+              <span className="text-amber-300">{content.name}</span>
             </h1>
-            <h2 className="text-xl sm:text-2xl md:text-3xl text-blue-200 font-semibold mb-6 typewritter ">
-              DevOps - <span className="text-orange-400">Cybersecurity Enthusiast</span>
+
+            <h2 className="typewriter mt-5 text-cyan-50">
+              {content.role} -{' '}
+              <span className="text-amber-200">{content.roleHighlight}</span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-blue-100 leading-relaxed mb-8 max-w-xl mx-auto md:mx-0">
-              I design and develop secure, scalable software applications using modern technologies.
-              My focus is on performance, clean architecture, and cybersecurity best practices.
+            <p className="mt-6 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed text-cyan-50/90 lg:mx-0">
+              {content.intro}
             </p>
 
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-
-              <a
-                href="#projects"
-                className="w-full sm:w-auto px-6 py-3 bg-yellow-400 text-black font-medium rounded-md shadow hover:bg-yellow-500 transition text-center"
-              >
-                View Projects
-              </a>
-
-              <a
-                href={resumePDF}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto px-6 py-3 border border-white/30 text-white font-medium rounded-md hover:bg-white/10 transition text-center"
-              >
-                View Resume
-              </a>
-
+            <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+              {content.actions.map((action) => (
+                <a
+                  key={action.label}
+                  href={action.href}
+                  target={action.external ? '_blank' : undefined}
+                  rel={action.external ? 'noopener noreferrer' : undefined}
+                  className={`inline-flex w-full items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-semibold transition sm:w-auto ${actionStyles[action.variant]}`}
+                >
+                  {createElement(action.icon, { size: 15 })}
+                  {action.label}
+                </a>
+              ))}
             </div>
 
-          </div>
-
-          
-          <div className="w-full md:w-1/2 flex justify-center md:justify-end">
-
-            <div className="relative w-40 h-40 sm:w-52 sm:h-52 md:w-64 md:h-64 lg:w-72 lg:h-72 animate-pulse-">
-
-              <img
-                src="/profile.png"
-                alt="Tom Maeta"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover object-top rounded-2xl border border-white/20 shadow-lg"
-              />
-
-              {/* decorative glow */}
-              <div className="absolute -inset-2 rounded-xl bg-gradient-to-r from-yellow-400 to-cyan-400 opacity-20 blur-2xl -z-10"></div>
-
+            <div className="mt-10 grid grid-cols-3 gap-3 text-left">
+              {content.highlights.map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-lg border border-white/15 bg-white/10 p-3 backdrop-blur transition-colors dark:border-white/10 dark:bg-white/5 sm:p-4"
+                >
+                  <p className="text-xl font-bold text-white sm:text-2xl">{item.value}</p>
+                  <p className="mt-1 text-[0.65rem] font-medium uppercase tracking-wide text-cyan-50/80 sm:text-xs">
+                    {item.label}
+                  </p>
+                </div>
+              ))}
             </div>
-
           </div>
 
-        </motion.div>
-
+          <div className="flex justify-center lg:justify-end">
+            <MotionDiv
+              initial={{ opacity: 0, scale: 0.95, x: 30 }}
+              whileInView={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: 0.55, ease: 'easeOut' }}
+              viewport={{ once: true }}
+              className="relative mx-auto w-64 max-w-full sm:w-72 md:w-80 lg:mx-0 lg:w-[22rem] xl:w-96"
+            >
+              <div className="relative overflow-hidden rounded-lg border border-white/25 bg-white/10 p-2 shadow-2xl shadow-blue-950/30 ring-1 ring-white/15 backdrop-blur transition-colors dark:border-white/10 dark:bg-white/5 sm:p-3">
+                <div className="aspect-[4/5] overflow-hidden rounded-md bg-white/10">
+                  <img
+                    src={content.image}
+                    alt={content.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover object-[center_18%]"
+                  />
+                </div>
+              </div>
+            </MotionDiv>
+          </div>
+        </MotionDiv>
       </div>
-    </section>
+    </MotionSection>
   )
 }
 

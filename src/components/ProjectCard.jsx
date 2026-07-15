@@ -1,75 +1,90 @@
-import React from 'react';
+import { FaExternalLinkAlt, FaGithub } from 'react-icons/fa'
+
+const MAX_VISIBLE_TECH = 4
 
 function ProjectCard({ title, description, image, tech, github, live }) {
+  const visibleTech = tech.slice(0, MAX_VISIBLE_TECH)
+  const hiddenTechCount = tech.length - visibleTech.length
+
   return (
-    <div className="group bg-blue-400 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-      {/* Image container with fixed aspect ratio */}
-      <div className="relative h-56 overflow-hidden bg-blue-200">
+    <article className="group flex h-full min-h-[30rem] flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
+      <div className="relative h-44 overflow-hidden bg-slate-100 dark:bg-slate-800 sm:h-48">
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => {
-            e.target.src = '/images/placeholder.jpg'; // fallback if image fails
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+          onError={(event) => {
+            event.currentTarget.style.display = 'none'
           }}
         />
-        {/* Optional dark gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div
+          className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-950/35 to-transparent"
+          aria-hidden="true"
+        />
       </div>
 
-      {/* Content */}
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{title}</h3>
-        <p className="text-gray-600 mb-4 text-sm leading-relaxed">{description}</p>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="text-lg font-bold leading-snug text-gray-950 dark:text-white">
+          {title}
+        </h3>
 
-        {/* Tech stack badges */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {tech.map((skill, idx) => (
+        <p className="project-card-description mt-3 text-sm leading-6 text-gray-600 dark:text-slate-300">
+          {description}
+        </p>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          {visibleTech.map((skill) => (
             <span
-              key={idx}
-              className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full"
+              key={`${title}-${skill}`}
+              className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300"
             >
               {skill}
             </span>
           ))}
+
+          {hiddenTechCount > 0 && (
+            <span className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-500 dark:border-slate-700 dark:text-slate-400">
+              +{hiddenTechCount}
+            </span>
+          )}
         </div>
 
-        {/* Optional links (only show if provided) */}
         {(github || live) && (
-          <div className="flex gap-4 pt-2 border-t border-gray-100">
-            {github && (
-              <a
-                href={github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-black-500 hover:text-red-600 transition-colors text-sm flex items-center gap-1"
-                aria-label="GitHub repository"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.21.68-.48 0-.24-.01-.87-.01-1.71-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.26.1-2.62 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.36.2 2.37.1 2.62.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48C19.13 20.17 22 16.42 22 12c0-5.52-4.48-10-10-10z" clipRule="evenodd" />
-                </svg>
-                Code
-              </a>
-            )}
-            {live && (
-              <a
-                href={live}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-500 hover:text-blue-600 transition-colors text-sm flex items-center gap-1"
-                aria-label="Live demo"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-                Live
-              </a>
-            )}
+          <div className="mt-auto flex items-center justify-end border-t border-gray-100 pt-5 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              {github && (
+                <a
+                  href={github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-amber-300/40 dark:hover:bg-amber-300/10 dark:hover:text-amber-300"
+                  aria-label={`${title} GitHub repository`}
+                >
+                  <FaGithub size={16} />
+                  Code
+                </a>
+              )}
+
+              {live && (
+                <a
+                  href={live}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-amber-300/40 dark:hover:bg-amber-300/10 dark:hover:text-amber-300"
+                  aria-label={`${title} live demo`}
+                >
+                  <FaExternalLinkAlt size={14} />
+                  Live
+                </a>
+              )}
+            </div>
           </div>
         )}
       </div>
-    </div>
-  );
+    </article>
+  )
 }
 
-export default ProjectCard;
+export default ProjectCard

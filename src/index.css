@@ -1,25 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 * {
     font-family: "Urbanist", sans-serif;
 }
 
-.typewritter {
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #ffffff;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.dark body {
+  background: #020617;
+}
+
+.typewriter {
   font-family: "Saira", sans-serif;
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-size: clamp(1.05rem, 2vw, 1.75rem);
   font-weight: 600;
   color: #dce2eb;
-
+  display: inline-block;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
-
-  
+  border-right: 2px solid transparent;
   padding-right: 6px;
-
   animation:
-    typing 5.5s steps(40, end) infinite,
+    typing 7s steps(40, end) infinite,
     blink-caret 1s step-end infinite;
+}
+
+.project-card-description {
+  display: -webkit-box;
+  min-height: 4.5rem;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 @keyframes typing {

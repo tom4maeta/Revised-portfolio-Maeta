@@ -1,192 +1,217 @@
-// src/components/Contact.jsx
-import React, { useRef, useState, useEffect } from 'react';
-import emailjs from '@emailjs/browser';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { createElement, useEffect, useRef, useState } from 'react'
+import emailjs from '@emailjs/browser'
+import { contactContent } from '../data/homeContent'
+import SectionHeader from './SectionHeader'
+import SectionShell from './SectionShell'
 
-const Contact = () => {
-  const formRef = useRef();
+function ContactDetail({ item }) {
+  const content = (
+    <>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-300">
+        {createElement(item.icon, { size: 18 })}
+      </span>
+      <span>
+        <span className="block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+          {item.label}
+        </span>
+        <span className="text-sm font-medium text-gray-800 dark:text-slate-100">{item.value}</span>
+      </span>
+    </>
+  )
+
+  if (item.href) {
+    return (
+      <a
+        href={item.href}
+        className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:border-blue-200 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-blue-500/50"
+      >
+        {content}
+      </a>
+    )
+  }
+
+  return (
+    <div className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      {content}
+    </div>
+  )
+}
+
+function Contact({ content = contactContent }) {
+  const formRef = useRef()
   const [status, setStatus] = useState({
     loading: false,
     success: null,
     error: null
-  });
+  })
 
-  // Auto‑dismiss success message after 4 seconds
   useEffect(() => {
-    if (status.success) {
-      const timer = setTimeout(() => {
-        setStatus(prev => ({ ...prev, success: null }));
-      }, 4000); // 4 seconds
-      return () => clearTimeout(timer);
+    if (!status.success) {
+      return undefined
     }
-  }, [status.success]);
 
-  // Clear status when user starts typing
+    const timer = setTimeout(() => {
+      setStatus((prev) => ({ ...prev, success: null }))
+    }, 4000)
+
+    return () => clearTimeout(timer)
+  }, [status.success])
+
   const handleInputChange = () => {
     if (status.success || status.error) {
-      setStatus({ loading: false, success: null, error: null });
+      setStatus({ loading: false, success: null, error: null })
     }
-  };
+  }
 
-  const sendEmail = (e) => {
-    e.preventDefault();
-    
-    setStatus({ loading: true, success: null, error: null });
+  const sendEmail = (event) => {
+    event.preventDefault()
 
-    emailjs.sendForm(
-      import.meta.env.VITE_EMAILJS_SERVICE_ID,
-      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-      formRef.current,
-      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-    )
-    .then(() => {
-      setStatus({ 
-        loading: false, 
-        success: 'Message sent successfully! I will get back to you soon.', 
-        error: null 
-      });
-      formRef.current.reset(); // Clear the form
-    })
-    .catch((error) => {
-      console.error('EmailJS error:', error);
-      setStatus({ 
-        loading: false, 
-        success: null, 
-        error: 'Failed to send message. Please try again later.' 
-      });
-    });
-  };
+    setStatus({ loading: true, success: null, error: null })
+
+    emailjs
+      .sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        formRef.current,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      )
+      .then(() => {
+        setStatus({
+          loading: false,
+          success: 'Message sent successfully! I will get back to you soon.',
+          error: null
+        })
+        formRef.current?.reset()
+      })
+      .catch((error) => {
+        console.error('EmailJS error:', error)
+        setStatus({
+          loading: false,
+          success: null,
+          error: 'Failed to send message. Please try again later.'
+        })
+      })
+  }
 
   return (
-    <section id="contact" className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-800 mb-2"> <span className="text-blue-600">Get</span> In Touch</h2>
-          <p className="text-black-600 max-w-2xl mx-auto">
-            Have a question or want to work together? Feel free to reach out!
-          </p>
-          <div className="w-24 h-1 bg-blue-600 mx-auto mt-4 rounded-full"></div>
-        </div>
+    <SectionShell id="contact" className="bg-white dark:bg-slate-900">
+      <SectionHeader
+        title={content.title}
+        highlightedTitle={content.highlightedTitle}
+        description={content.description}
+      />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Info & Social Links */}
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-2xl font-semibold text-shadow-cyan-400 mb-4">Contact Information</h3>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 text-gray-600">
-                  <FaEnvelope className="text-blue-600 text-xl" />
-                  <span>aikotom3@gmail.com</span>
-                </div>
-                <div className="flex items-center gap-4 text-gray-600">
-                  <FaPhone className="text-blue-600 text-xl" />
-                  <span>+254 738552698</span>
-                </div>
-                <div className="flex items-center gap-4 text-gray-600">
-                  <FaMapMarkerAlt className="text-blue-600 text-xl" />
-                  <span>Nairobi, Kenya</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-semibold text-red-800 mb-4">Connect with Me</h3>
-              <div className="flex gap-6">
-                <a href="https://github.com/tom4maeta" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-600 transition-colors" aria-label="GitHub">
-                  <FaGithub size={28} />
-                </a>
-                <a href="https://linkedin.com/in/tom-maeta254" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-600 transition-colors" aria-label="LinkedIn">
-                  <FaLinkedin size={28} />
-                </a>
-                <a href="https://twitter.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-600 transition-colors" aria-label="Twitter">
-                  <FaTwitter size={28} />
-                </a>
-              </div>
+      <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-8">
+          <div>
+            <h3 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+              {content.detailsTitle}
+            </h3>
+            <div className="space-y-3">
+              {content.details.map((item) => (
+                <ContactDetail key={item.label} item={item} />
+              ))}
             </div>
           </div>
 
-          {/* Contact Form */}
-          <form ref={formRef} onSubmit={sendEmail} className="bg-white rounded-xl shadow-md p-8">
-            <h3 className="text-2xl font-semibold text-blue-800 mb-6">Send a Message</h3>
-
-            {/* Name Field */}
-            <div className="mb-4">
-              <label htmlFor="from_name" className="block text-black-700 font-medium mb-2">
-                Name
-              </label>
-              <input
-                type="text"
-                id="from_name"
-                name="from_name"
-                required
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                placeholder="Your name"
-              />
+          <div>
+            <h3 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+              {content.socialTitle}
+            </h3>
+            <div className="flex gap-3">
+              {content.socials.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  className="flex h-11 w-11 items-center justify-center rounded-md border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:border-blue-200 hover:text-blue-600 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-blue-500/50 dark:hover:text-amber-300"
+                >
+                  {createElement(social.icon, { size: 20 })}
+                </a>
+              ))}
             </div>
-
-            {/* Email Field */}
-            <div className="mb-4">
-              <label htmlFor="reply_to" className="block text-black-700 font-medium mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="reply_to"
-                name="reply_to"
-                required
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                placeholder="user21@example.com"
-              />
-            </div>
-
-            {/* Message Field */}
-            <div className="mb-6">
-              <label htmlFor="message" className="block text-black-700 font-medium mb-2">
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                rows="5"
-                required
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                placeholder="Your message..."
-              ></textarea>
-            </div>
-
-            {/* Status Messages */}
-            {status.success && (
-              <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg transition-opacity duration-300">
-                {status.success}
-              </div>
-            )}
-            {status.error && (
-              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
-                {status.error}
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={status.loading}
-              className={`w-full bg-blue-600 text-white font-semibold py-3 rounded-lg transition ${
-                status.loading
-                  ? 'opacity-70 cursor-not-allowed'
-                  : 'hover:bg-blue-700 transform hover:-translate-y-0.5'
-              }`}
-            >
-              {status.loading ? 'Sending...' : 'Send Message'}
-            </button>
-          </form>
+          </div>
         </div>
-      </div>
-    </section>
-  );
-};
 
-export default Contact;
+        <form
+          ref={formRef}
+          onSubmit={sendEmail}
+          className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-8"
+        >
+          <h3 className="mb-6 text-xl font-semibold text-gray-900 dark:text-white">
+            {content.formTitle}
+          </h3>
+
+          <div className="mb-4">
+            <label htmlFor="from_name" className="mb-2 block font-medium text-gray-700 dark:text-slate-200">
+              Name
+            </label>
+            <input
+              type="text"
+              id="from_name"
+              name="from_name"
+              required
+              onChange={handleInputChange}
+              className="w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-gray-900 transition placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+              placeholder="Your name"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="reply_to" className="mb-2 block font-medium text-gray-700 dark:text-slate-200">
+              Email
+            </label>
+            <input
+              type="email"
+              id="reply_to"
+              name="reply_to"
+              required
+              onChange={handleInputChange}
+              className="w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-gray-900 transition placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+              placeholder="user21@example.com"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="message" className="mb-2 block font-medium text-gray-700 dark:text-slate-200">
+              Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows="5"
+              required
+              onChange={handleInputChange}
+              className="w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-gray-900 transition placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500"
+              placeholder="Your message..."
+            />
+          </div>
+
+          {status.success && (
+            <div className="mb-4 rounded-md bg-green-50 p-3 text-sm font-medium text-green-700 dark:bg-green-500/10 dark:text-green-300">
+              {status.success}
+            </div>
+          )}
+
+          {status.error && (
+            <div className="mb-4 rounded-md bg-red-50 p-3 text-sm font-medium text-red-700 dark:bg-red-500/10 dark:text-red-300">
+              {status.error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={status.loading}
+            className="w-full rounded-md bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {status.loading ? 'Sending...' : 'Send Message'}
+          </button>
+        </form>
+      </div>
+    </SectionShell>
+  )
+}
+
+export default Contact
