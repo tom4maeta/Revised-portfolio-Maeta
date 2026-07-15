@@ -35,6 +35,18 @@ body {
     blink-caret 1s step-end infinite;
 }
 
+@media (max-width: 639px) {
+  .typewriter {
+    display: block;
+    width: auto;
+    white-space: normal;
+    overflow: visible;
+    border-right: 0;
+    padding-right: 0;
+    animation: none;
+  }
+}
+
 .project-card-description {
   display: -webkit-box;
   min-height: 4.5rem;
