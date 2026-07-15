@@ -1,5 +1,5 @@
-import { createElement } from 'react'
-import { motion } from 'framer-motion'
+import { createElement, useEffect, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { heroContent } from '../data/homeContent'
 
 const MotionSection = motion.section
@@ -10,6 +10,66 @@ const actionStyles = {
     'bg-amber-400 text-gray-950 shadow-sm shadow-amber-500/30 hover:bg-amber-300',
   secondary:
     'border border-white/25 text-white hover:border-white/50 hover:bg-white/10'
+}
+
+function TypewriterRole({ role, roleHighlight }) {
+  const prefix = `${role} - `
+  const fullText = `${prefix}${roleHighlight}`
+  const [visibleCharacters, setVisibleCharacters] = useState(0)
+  const [isTyping, setIsTyping] = useState(true)
+  const shouldReduceMotion = useReducedMotion()
+  const displayedCharacters = shouldReduceMotion
+    ? fullText.length
+    : visibleCharacters
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      return undefined
+    }
+
+    const isAtEnd = visibleCharacters === fullText.length
+    const isAtStart = visibleCharacters === 0
+    const delay = isTyping
+      ? isAtEnd ? 1600 : 55
+      : isAtStart ? 500 : 30
+
+    const timeoutId = window.setTimeout(() => {
+      if (isTyping) {
+        if (isAtEnd) {
+          setIsTyping(false)
+        } else {
+          setVisibleCharacters((current) => current + 1)
+        }
+      } else if (isAtStart) {
+        setIsTyping(true)
+      } else {
+        setVisibleCharacters((current) => current - 1)
+      }
+    }, delay)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [fullText.length, isTyping, shouldReduceMotion, visibleCharacters])
+
+  const visiblePrefix = prefix.slice(0, displayedCharacters)
+  const visibleHighlight = roleHighlight.slice(
+    0,
+    Math.max(0, displayedCharacters - prefix.length)
+  )
+
+  return (
+    <h2 className="typewriter mt-5 text-cyan-50" aria-label={fullText}>
+      <span className="typewriter-spacer" aria-hidden="true">
+        {prefix}
+        <span className="text-amber-200">{roleHighlight}</span>
+      </span>
+
+      <span className="typewriter-output" aria-hidden="true">
+        {visiblePrefix}
+        <span className="text-amber-200">{visibleHighlight}</span>
+        {!shouldReduceMotion && <span className="typewriter-caret" />}
+      </span>
+    </h2>
+  )
 }
 
 function Hero({ content = heroContent }) {
@@ -35,10 +95,11 @@ function Hero({ content = heroContent }) {
               <span className="text-amber-300">{content.name}</span>
             </h1>
 
-            <h2 className="typewriter mt-5 text-cyan-50">
-              {content.role} -{' '}
-              <span className="text-amber-200">{content.roleHighlight}</span>
-            </h2>
+            <TypewriterRole
+              key={`${content.role}-${content.roleHighlight}`}
+              role={content.role}
+              roleHighlight={content.roleHighlight}
+            />
 
             <p className="mx-auto mt-6 max-w-2xl break-words text-base leading-relaxed text-cyan-50/90 sm:text-lg lg:mx-0">
               {content.intro}
